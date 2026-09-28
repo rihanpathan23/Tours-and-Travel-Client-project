@@ -2,6 +2,7 @@ import Navbar from "./components/Navbar";
 import About from "./components/About";
 import Destinations from "./components/Destinations";
 import TourPackages from "./components/TourPackages";
+import Booking from "./components/Booking";
 import Contact from "./components/Contact";
 
 function App() {
@@ -35,6 +36,9 @@ function App() {
 
       {/* Tour Packages Section */}
       <TourPackages />
+
+      {/* Booking Form Section */}
+      <Booking />
 
       {/* Contact Section */}
       <Contact />
