@@ -1,5 +1,6 @@
 import Navbar from "./components/Navbar";
 import About from "./components/About";
+import TourPackages from "./components/TourPackages";
 
 function App() {
   return (
@@ -26,6 +27,9 @@ function App() {
 
       {/* About Section */}
       <About />
+      
+      {/* Tour Packages Section */}
+      <TourPackages />
     </div>
   );
 }
