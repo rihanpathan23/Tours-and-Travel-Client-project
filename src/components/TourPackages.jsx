@@ -9,7 +9,7 @@ const TourPackages = () => {
       description: "Experience the snow-capped peaks, lush pine forests, and thrilling mountain adventures in the heart of the Himalayas.",
       duration: "5 Days / 4 Nights",
       price: "₹22,000",
-      image: "https://images.unsplash.com/photo-1605649487212-4dcb1b6b1cd6?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+      image: "https://images.unsplash.com/photo-1626621341517-bbf3d9990a23?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
       featured: true,
     },
     {
@@ -30,9 +30,74 @@ const TourPackages = () => {
       duration: "4 Days / 3 Nights",
       price: "₹15,000",
       image: "https://images.unsplash.com/photo-1512343879784-a960bf40e7f2?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+      featured: true,
+    },
+    {
+      id: 4,
+      title: "Royal Rajasthan Heritage",
+      location: "Rajasthan",
+      description: "Discover the majestic forts of Jaipur, the romantic lakes of Udaipur, and the timeless culture of the desert state.",
+      duration: "7 Days / 6 Nights",
+      price: "₹32,000",
+      image: "https://images.unsplash.com/photo-1603262110263-fb0112e7cc33?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+      featured: false,
+    },
+    {
+      id: 5,
+      title: "Andaman Tropical Paradise",
+      location: "Andaman Islands",
+      description: "Enjoy pristine white-sand beaches, crystal clear waters, scuba diving, and unforgettable sunsets in Havelock.",
+      duration: "6 Days / 5 Nights",
+      price: "₹45,000",
+      image: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+      featured: false,
+    },
+    {
+      id: 6,
+      title: "Kashmir Valley Tour",
+      location: "Jammu & Kashmir",
+      description: "Experience a Shikara ride on Dal Lake, stroll through tulip gardens, and witness the unparalleled beauty of Gulmarg.",
+      duration: "5 Days / 4 Nights",
+      price: "₹29,000",
+      image: "https://images.unsplash.com/photo-1595815771614-ade9d652a65d?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+      featured: true,
+    },
+    {
+      id: 7,
+      title: "Epic Ladakh Expedition",
+      location: "Ladakh",
+      description: "Ride through high mountain passes, camp by the mesmerizing Pangong Lake, and explore ancient Buddhist monasteries.",
+      duration: "8 Days / 7 Nights",
+      price: "₹38,500",
+      image: "https://images.unsplash.com/photo-1581793746788-1c7c34571d8f?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+      featured: false,
+    },
+    {
+      id: 8,
+      title: "Darjeeling Tea Trail",
+      location: "West Bengal",
+      description: "Watch the sunrise over Mount Kanchenjunga, take a ride on the toy train, and walk through world-famous tea estates.",
+      duration: "4 Days / 3 Nights",
+      price: "₹18,000",
+      image: "https://images.unsplash.com/photo-1544735716-392fe2489ffa?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+      featured: false,
+    },
+    {
+      id: 9,
+      title: "Mystic Meghalaya",
+      location: "Meghalaya",
+      description: "Walk on living root bridges, visit the cleanest village in Asia, and explore stunning waterfalls and deep caves.",
+      duration: "6 Days / 5 Nights",
+      price: "₹26,000",
+      image: "https://images.unsplash.com/photo-1469474968028-56623f02e42e?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
       featured: false,
     }
   ];
+
+  // Fallback image in case a URL fails to load
+  const handleImageError = (e) => {
+    e.target.src = 'https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80';
+  };
 
   return (
     <section id="packages" className="py-24 bg-gray-50">
@@ -57,11 +122,13 @@ const TourPackages = () => {
               className="group bg-white rounded-3xl overflow-hidden shadow-md hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 border border-gray-100 flex flex-col"
             >
               {/* Card Image */}
-              <div className="relative h-64 overflow-hidden">
+              <div className="relative h-64 overflow-hidden bg-gray-100">
                 <img 
                   src={pkg.image} 
-                  alt={pkg.title} 
+                  alt={`Travel package for ${pkg.title} in ${pkg.location}`} 
                   className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                  loading="lazy"
+                  onError={handleImageError}
                 />
                 {/* Overlay gradient */}
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
