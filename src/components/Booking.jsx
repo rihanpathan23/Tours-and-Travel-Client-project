@@ -10,8 +10,9 @@ const Booking = () => {
     travelers: 1,
   });
 
-  const [bookingSummary, setBookingSummary] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
+  const [successMessage, setSuccessMessage] = useState('');
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -21,9 +22,12 @@ const Booking = () => {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    setErrorMessage('');
+    setSuccessMessage('');
 
+    // Frontend Validation
     if (
       !formData.fullName.trim() ||
       !formData.email.trim() ||
@@ -36,12 +40,48 @@ const Booking = () => {
       return;
     }
 
-    setErrorMessage('');
-    setBookingSummary({ ...formData });
-  };
+    setIsLoading(true);
 
-  const handleEditDetails = () => {
-    setBookingSummary(null);
+    try {
+      const response = await fetch('http://localhost:5000/api/bookings', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          full_name: formData.fullName,
+          email: formData.email,
+          phone: formData.phone,
+          destination: formData.destination,
+          travel_date: formData.travelDate,
+          guests: parseInt(formData.travelers, 10),
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok && data.success) {
+        // Show success message and clear form
+        setSuccessMessage('Booking successful! We have received your details and will contact you shortly.');
+        setFormData({
+          fullName: '',
+          email: '',
+          phone: '',
+          destination: '',
+          travelDate: '',
+          travelers: 1,
+        });
+      } else {
+        // Show error from backend
+        setErrorMessage(data.message || 'Failed to create booking. Please try again.');
+      }
+    } catch (error) {
+      // Handle network errors
+      console.error('Booking error:', error);
+      setErrorMessage('Unable to connect to the server. Please check your internet connection and try again.');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -62,182 +102,161 @@ const Booking = () => {
 
         {/* Card Container */}
         <div className="bg-gray-50 border border-gray-100 rounded-3xl p-8 sm:p-12 shadow-sm">
-          {!bookingSummary ? (
-            <form onSubmit={handleSubmit} className="space-y-6">
-              {errorMessage && (
-                <div className="p-4 bg-red-50 border border-red-200 text-red-600 text-sm font-medium rounded-xl">
-                  {errorMessage}
-                </div>
-              )}
+          
+          {/* Status Messages */}
+          {errorMessage && (
+            <div className="mb-6 p-4 bg-red-50 border border-red-200 text-red-600 text-sm font-medium rounded-xl flex items-center">
+              <svg className="w-5 h-5 mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              {errorMessage}
+            </div>
+          )}
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                {/* Full Name */}
-                <div>
-                  <label htmlFor="fullName" className="block text-sm font-semibold text-gray-700 mb-2">
-                    Full Name <span className="text-red-500">*</span>
-                  </label>
-                  <input
-                    type="text"
-                    id="fullName"
-                    name="fullName"
-                    value={formData.fullName}
-                    onChange={handleChange}
-                    placeholder="Enter your full name"
-                    className="w-full px-4 py-3.5 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-600 focus:border-blue-600 outline-none transition-colors duration-200"
-                  />
-                </div>
+          {successMessage && (
+            <div className="mb-6 p-4 bg-green-50 border border-green-200 text-green-700 text-sm font-medium rounded-xl flex items-center">
+              <svg className="w-5 h-5 mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              {successMessage}
+            </div>
+          )}
 
-                {/* Email Address */}
-                <div>
-                  <label htmlFor="email" className="block text-sm font-semibold text-gray-700 mb-2">
-                    Email Address <span className="text-red-500">*</span>
-                  </label>
-                  <input
-                    type="email"
-                    id="email"
-                    name="email"
-                    value={formData.email}
-                    onChange={handleChange}
-                    placeholder="you@example.com"
-                    className="w-full px-4 py-3.5 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-600 focus:border-blue-600 outline-none transition-colors duration-200"
-                  />
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-                {/* Phone Number */}
-                <div>
-                  <label htmlFor="phone" className="block text-sm font-semibold text-gray-700 mb-2">
-                    Phone Number <span className="text-red-500">*</span>
-                  </label>
-                  <input
-                    type="tel"
-                    id="phone"
-                    name="phone"
-                    value={formData.phone}
-                    onChange={handleChange}
-                    placeholder="+91 98765 43210"
-                    className="w-full px-4 py-3.5 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-600 focus:border-blue-600 outline-none transition-colors duration-200"
-                  />
-                </div>
-
-                {/* Destination Dropdown */}
-                <div>
-                  <label htmlFor="destination" className="block text-sm font-semibold text-gray-700 mb-2">
-                    Destination <span className="text-red-500">*</span>
-                  </label>
-                  <select
-                    id="destination"
-                    name="destination"
-                    value={formData.destination}
-                    onChange={handleChange}
-                    className="w-full px-4 py-3.5 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-600 focus:border-blue-600 outline-none transition-colors duration-200 text-gray-700"
-                  >
-                    <option value="">Select Destination</option>
-                    <option value="Goa">Goa</option>
-                    <option value="Manali">Manali</option>
-                    <option value="Kerala">Kerala</option>
-                  </select>
-                </div>
-
-                {/* Number of Travelers */}
-                <div>
-                  <label htmlFor="travelers" className="block text-sm font-semibold text-gray-700 mb-2">
-                    Travelers <span className="text-red-500">*</span>
-                  </label>
-                  <input
-                    type="number"
-                    id="travelers"
-                    name="travelers"
-                    min="1"
-                    max="50"
-                    value={formData.travelers}
-                    onChange={handleChange}
-                    className="w-full px-4 py-3.5 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-600 focus:border-blue-600 outline-none transition-colors duration-200"
-                  />
-                </div>
-              </div>
-
-              {/* Travel Date */}
+          <form onSubmit={handleSubmit} className="space-y-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+              {/* Full Name */}
               <div>
-                <label htmlFor="travelDate" className="block text-sm font-semibold text-gray-700 mb-2">
-                  Travel Date <span className="text-red-500">*</span>
+                <label htmlFor="fullName" className="block text-sm font-semibold text-gray-700 mb-2">
+                  Full Name <span className="text-red-500">*</span>
                 </label>
                 <input
-                  type="date"
-                  id="travelDate"
-                  name="travelDate"
-                  value={formData.travelDate}
+                  type="text"
+                  id="fullName"
+                  name="fullName"
+                  value={formData.fullName}
                   onChange={handleChange}
-                  className="w-full px-4 py-3.5 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-600 focus:border-blue-600 outline-none transition-colors duration-200 text-gray-700"
+                  placeholder="Enter your full name"
+                  disabled={isLoading}
+                  className="w-full px-4 py-3.5 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-600 focus:border-blue-600 outline-none transition-colors duration-200 disabled:bg-gray-100 disabled:cursor-not-allowed"
                 />
               </div>
 
-              {/* Submit Button */}
-              <div className="pt-4">
-                <button
-                  type="submit"
-                  className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 px-8 rounded-xl shadow-md hover:shadow-lg transition-all duration-300 transform hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-600"
-                >
-                  Continue to Payment
-                </button>
-              </div>
-            </form>
-          ) : (
-            /* Booking Summary */
-            <div className="space-y-6">
-              <div className="border-b border-gray-200 pb-4">
-                <h4 className="text-2xl font-bold text-gray-900">Review Booking Summary</h4>
-                <p className="text-sm text-gray-600 mt-1">
-                  Please review your details before proceeding to the payment step.
-                </p>
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 bg-white p-6 rounded-2xl border border-gray-100">
-                <div>
-                  <span className="text-xs uppercase font-semibold tracking-wider text-gray-500">Traveler Name</span>
-                  <p className="text-base font-bold text-gray-900 mt-1">{bookingSummary.fullName}</p>
-                </div>
-                <div>
-                  <span className="text-xs uppercase font-semibold tracking-wider text-gray-500">Email Address</span>
-                  <p className="text-base font-bold text-gray-900 mt-1">{bookingSummary.email}</p>
-                </div>
-                <div>
-                  <span className="text-xs uppercase font-semibold tracking-wider text-gray-500">Phone Number</span>
-                  <p className="text-base font-bold text-gray-900 mt-1">{bookingSummary.phone}</p>
-                </div>
-                <div>
-                  <span className="text-xs uppercase font-semibold tracking-wider text-gray-500">Selected Destination</span>
-                  <p className="text-base font-bold text-blue-600 mt-1">{bookingSummary.destination}</p>
-                </div>
-                <div>
-                  <span className="text-xs uppercase font-semibold tracking-wider text-gray-500">Travel Date</span>
-                  <p className="text-base font-bold text-gray-900 mt-1">{bookingSummary.travelDate}</p>
-                </div>
-                <div>
-                  <span className="text-xs uppercase font-semibold tracking-wider text-gray-500">Total Travelers</span>
-                  <p className="text-base font-bold text-gray-900 mt-1">{bookingSummary.travelers}</p>
-                </div>
-              </div>
-
-              <div className="flex flex-col sm:flex-row gap-4 pt-4">
-                <button
-                  type="button"
-                  onClick={handleEditDetails}
-                  className="w-full sm:w-1/2 py-3.5 px-6 rounded-xl font-semibold border border-gray-300 text-gray-700 bg-white hover:bg-gray-100 transition-colors duration-200"
-                >
-                  Edit Details
-                </button>
-                <button
-                  type="button"
-                  onClick={() => alert('Payment gateway integration in progress.')}
-                  className="w-full sm:w-1/2 py-3.5 px-6 rounded-xl font-bold text-white bg-blue-600 hover:bg-blue-700 transition-all duration-300 shadow-md hover:shadow-lg"
-                >
-                  Proceed to Pay
-                </button>
+              {/* Email Address */}
+              <div>
+                <label htmlFor="email" className="block text-sm font-semibold text-gray-700 mb-2">
+                  Email Address <span className="text-red-500">*</span>
+                </label>
+                <input
+                  type="email"
+                  id="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleChange}
+                  placeholder="you@example.com"
+                  disabled={isLoading}
+                  className="w-full px-4 py-3.5 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-600 focus:border-blue-600 outline-none transition-colors duration-200 disabled:bg-gray-100 disabled:cursor-not-allowed"
+                />
               </div>
             </div>
-          )}
+
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+              {/* Phone Number */}
+              <div>
+                <label htmlFor="phone" className="block text-sm font-semibold text-gray-700 mb-2">
+                  Phone Number <span className="text-red-500">*</span>
+                </label>
+                <input
+                  type="tel"
+                  id="phone"
+                  name="phone"
+                  value={formData.phone}
+                  onChange={handleChange}
+                  placeholder="+91 98765 43210"
+                  disabled={isLoading}
+                  className="w-full px-4 py-3.5 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-600 focus:border-blue-600 outline-none transition-colors duration-200 disabled:bg-gray-100 disabled:cursor-not-allowed"
+                />
+              </div>
+
+              {/* Destination Dropdown */}
+              <div>
+                <label htmlFor="destination" className="block text-sm font-semibold text-gray-700 mb-2">
+                  Destination <span className="text-red-500">*</span>
+                </label>
+                <select
+                  id="destination"
+                  name="destination"
+                  value={formData.destination}
+                  onChange={handleChange}
+                  disabled={isLoading}
+                  className="w-full px-4 py-3.5 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-600 focus:border-blue-600 outline-none transition-colors duration-200 text-gray-700 disabled:bg-gray-100 disabled:cursor-not-allowed"
+                >
+                  <option value="">Select Destination</option>
+                  <option value="Goa">Goa</option>
+                  <option value="Manali">Manali</option>
+                  <option value="Kerala">Kerala</option>
+                </select>
+              </div>
+
+              {/* Number of Travelers */}
+              <div>
+                <label htmlFor="travelers" className="block text-sm font-semibold text-gray-700 mb-2">
+                  Travelers <span className="text-red-500">*</span>
+                </label>
+                <input
+                  type="number"
+                  id="travelers"
+                  name="travelers"
+                  min="1"
+                  max="50"
+                  value={formData.travelers}
+                  onChange={handleChange}
+                  disabled={isLoading}
+                  className="w-full px-4 py-3.5 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-600 focus:border-blue-600 outline-none transition-colors duration-200 disabled:bg-gray-100 disabled:cursor-not-allowed"
+                />
+              </div>
+            </div>
+
+            {/* Travel Date */}
+            <div>
+              <label htmlFor="travelDate" className="block text-sm font-semibold text-gray-700 mb-2">
+                Travel Date <span className="text-red-500">*</span>
+              </label>
+              <input
+                type="date"
+                id="travelDate"
+                name="travelDate"
+                value={formData.travelDate}
+                onChange={handleChange}
+                disabled={isLoading}
+                className="w-full px-4 py-3.5 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-600 focus:border-blue-600 outline-none transition-colors duration-200 text-gray-700 disabled:bg-gray-100 disabled:cursor-not-allowed"
+              />
+            </div>
+
+            {/* Submit Button */}
+            <div className="pt-4">
+              <button
+                type="submit"
+                disabled={isLoading}
+                className={`w-full text-white font-bold py-4 px-8 rounded-xl shadow-md transition-all duration-300 transform focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-600 ${
+                  isLoading 
+                    ? 'bg-blue-400 cursor-not-allowed' 
+                    : 'bg-blue-600 hover:bg-blue-700 hover:shadow-lg hover:-translate-y-0.5'
+                }`}
+              >
+                {isLoading ? (
+                  <span className="flex items-center justify-center">
+                    <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    Processing...
+                  </span>
+                ) : (
+                  'Confirm Booking'
+                )}
+              </button>
+            </div>
+          </form>
         </div>
       </div>
     </section>
