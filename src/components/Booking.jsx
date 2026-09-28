@@ -194,8 +194,17 @@ const Booking = () => {
                   <option value="Goa">Goa</option>
                   <option value="Manali">Manali</option>
                   <option value="Kerala">Kerala</option>
+                  <option value="Rajasthan">Rajasthan</option>
+                  <option
+    value="Andaman">Andaman</option>
+    <option value="Leh-Ladakh">Leh-Ladakh</option>
+    <option value="Darjeeling">Darjeeling</option>
+    <option value="Shimla">Shimla</option>
+    <option value="Sikkim">Sikkim</option>
                 </select>
               </div>
+        
+              
 
               {/* Number of Travelers */}
               <div>
