@@ -58,9 +58,24 @@ const Destinations = () => {
     }
   ];
 
-  // Fallback image in case a URL fails to load
+  // Fallback image
   const handleImageError = (e) => {
     e.target.src = 'https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80';
+  };
+
+  // Scroll function to redirect to Packages section
+  const handleExplore = () => {
+    const packagesSection = document.getElementById('packages');
+    if (packagesSection) {
+      const offset = 80; // Navbar height offset
+      const elementPosition = packagesSection.getBoundingClientRect().top;
+      const offsetPosition = elementPosition + window.pageYOffset - offset;
+  
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: 'smooth'
+      });
+    }
   };
 
   return (
@@ -112,8 +127,11 @@ const Destinations = () => {
                   {destination.description}
                 </p>
                 
-                {/* Button */}
-                <button className="inline-flex items-center justify-center w-full bg-blue-50 hover:bg-blue-600 text-blue-600 hover:text-white font-semibold py-3.5 px-6 rounded-xl transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-600">
+                {/* Button updated with onClick handler */}
+                <button 
+                  onClick={handleExplore}
+                  className="inline-flex items-center justify-center w-full bg-blue-50 hover:bg-blue-600 text-blue-600 hover:text-white font-semibold py-3.5 px-6 rounded-xl transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-600 cursor-pointer"
+                >
                   <span>Explore Destination</span>
                   <svg className="w-5 h-5 ml-2 transform transition-transform group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />

@@ -99,6 +99,21 @@ const TourPackages = () => {
     e.target.src = 'https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80';
   };
 
+  // Scroll function to redirect to Booking section
+  const handleViewDetails = () => {
+    const bookingSection = document.getElementById('booking');
+    if (bookingSection) {
+      const offset = 80; // Navbar ki height compensate karne ke liye
+      const elementPosition = bookingSection.getBoundingClientRect().top;
+      const offsetPosition = elementPosition + window.pageYOffset - offset;
+  
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: 'smooth'
+      });
+    }
+  };
+
   return (
     <section id="packages" className="py-24 bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -174,9 +189,12 @@ const TourPackages = () => {
                   </div>
                 </div>
 
-                {/* Action Button */}
-                <button className="w-full bg-gray-50 hover:bg-blue-600 text-gray-900 hover:text-white border border-gray-200 hover:border-blue-600 font-semibold py-3 px-4 rounded-xl transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-600">
-                  View Details
+                {/* Action Button updated with onClick handler */}
+                <button 
+                  onClick={handleViewDetails}
+                  className="w-full bg-gray-50 hover:bg-blue-600 text-gray-900 hover:text-white border border-gray-200 hover:border-blue-600 font-semibold py-3 px-4 rounded-xl transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-600 cursor-pointer"
+                >
+                  Book Package
                 </button>
               </div>
             </div>
@@ -185,8 +203,11 @@ const TourPackages = () => {
         
         {/* View All Button */}
         <div className="text-center mt-12">
-          <button className="inline-flex items-center justify-center space-x-2 text-blue-600 font-semibold hover:text-blue-800 transition-colors duration-200">
-            <span>View all packages</span>
+          <button 
+            onClick={handleViewDetails}
+            className="inline-flex items-center justify-center space-x-2 text-blue-600 font-semibold hover:text-blue-800 transition-colors duration-200 cursor-pointer"
+          >
+            <span>Book a custom package</span>
             <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
             </svg>
