@@ -12,9 +12,8 @@ function AdminDashboard() {
     const fetchBookings = async () => {
       try {
         const response = await fetch(
-          "http://localhost:5000/api/bookings"
-        );
-
+  `${import.meta.env.VITE_API_URL}/api/bookings`
+);
         if (!response.ok) {
           throw new Error("Failed to fetch bookings");
         }

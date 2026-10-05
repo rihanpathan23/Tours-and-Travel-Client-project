@@ -43,21 +43,23 @@ const Booking = () => {
     setIsLoading(true);
 
     try {
-      const response = await fetch('http://localhost:5000/api/bookings', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          full_name: formData.fullName,
-          email: formData.email,
-          phone: formData.phone,
-          destination: formData.destination,
-          travel_date: formData.travelDate,
-          guests: parseInt(formData.travelers, 10),
-        }),
-      });
-
+      const response = await fetch(
+  `${import.meta.env.VITE_API_URL}/api/bookings`,
+  {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      full_name: formData.fullName,
+      email: formData.email,
+      phone: formData.phone,
+      destination: formData.destination,
+      travel_date: formData.travelDate,
+      guests: parseInt(formData.travelers, 10),
+    }),
+  }
+);
       const data = await response.json();
 
       if (response.ok && data.success) {
