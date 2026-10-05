@@ -12,11 +12,10 @@ const resend = process.env.RESEND_API_KEY
 
 // Middleware
 app.use(cors({
-  origin: 'http://localhost:5173',
+  origin: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   credentials: true
 }));
-
 app.use(express.json());
 
 // Health Check Route
